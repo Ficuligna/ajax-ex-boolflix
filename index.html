@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="style.css">
+		<title>Boolflix</title>
+	</head>
+	<body>
+		<input type="text" name="" placeholder="Cerca un titolo">
+		<button type="button" name="button">Cerca</button>
+		<div class="risultatiRicerca">
+
+		</div>
+
+
+		<!-- template -->
+		<script class="giacomo" type="text/x-handlebars-template">
+			<div class="film">
+				<div>titolo {{titolo}}</div>
+				<div>titolo originale {{titoloOr}}</div>
+				<div>lingua {{lingua}}</div>
+				<div>voto {{voto}}</div>
+			</div>
+
+		</script>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+		<script type="text/javascript" src="main.js"></script>
+	</body>
+</html>
