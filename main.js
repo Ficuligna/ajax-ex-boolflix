@@ -75,12 +75,17 @@ $(document).ready(function () {
 
           $(".risultatiRicerca").append(template(risultato))
         }
+        setTimeout(function(){
+          for (var i = 0; i < risultati.length; i++) {
+            $(".finalmenteAttori").eq(i).html(listaAttori[i])
 
-        $(".bo").click(function(){
-
-          var indice = $(this).parent().index();
-          $(this).siblings(".finalmenteAttori").html(listaAttori[indice])
-        })
+          }
+        },500)
+        // $(".bo").click(function(){
+        //
+        //   var indice = $(this).parent().index();
+        //   $(this).siblings(".finalmenteAttori").html(listaAttori[indice])
+        // })
       },
       error: function(richiesta,stato,errore){
         alert("Chiamata fallita!!!");
