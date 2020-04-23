@@ -1,76 +1,52 @@
 
 $(document).ready(function () {
 
-
-
   var source = $(".giacomo").html();
   var template = Handlebars.compile(source)
   $("button").click(function(){   //Funzione di ricerca
     $(".risultatiRicerca").html("");
     var valoreRicerca = $("input").val();
-    console.log(valoreRicerca);
-    $.ajax({
-      url: "https://api.themoviedb.org/3/search/movie",
-      data: {
-        api_key: "337a5096c47a89ed7fe0ca372a05c5bc",
-        query: valoreRicerca
-      },
-      method: "GET",
-      success: function(data,stato) {
-        var films = data.results;
-        for (var i = 0; i < films.length; i++) {
-          var film = {
-            titolo: films[i].title,
-            titoloOr: films[i].original_title,
-            lingua: bandiere(films[i].original_language),
-            voto: votoStelle(films[i].vote_average)
-          }
-          $(".risultatiRicerca").append(template(film))
-        }
-      },
-      error: function(richiesta,stato,errore){
-        alert("Chiamata fallita!!!");
-      }
-    });
-    $.ajax({
-      url: "https://api.themoviedb.org/3/search/tv",
-      data: {
-        api_key: "337a5096c47a89ed7fe0ca372a05c5bc",
-        query: valoreRicerca
-      },
-      method: "GET",
-      success: function(data,stato) {
-        var serie = data.results;
-        for (var i = 0; i < serie.length; i++) {
-          var seria = {
-            titolo: serie[i].name,
-            titoloOr: serie[i].original_name,
-            lingua: bandiere(serie[i].original_language),
-            voto: votoStelle(serie[i].vote_average)
-          }
-          $(".risultatiRicerca").append(template(seria))
-        }
-      },
-      error: function(richiesta,stato,errore){
-        alert("Chiamata fallita!!!");
-      }
-    });
+    cercaTitoli("https://api.themoviedb.org/3/search/movie",valoreRicerca,"film")
+    cercaTitoli("https://api.themoviedb.org/3/search/tv",valoreRicerca,"serie")
   });
 
-  // funzione ricerca// ajax succe
-
-  function cercaTitoli(data,stato,genere) {
-   var films = data.results;
-   for (var i = 0; i < films.length; i++) {
-     var film = {
-       titolo: films[i].title,
-       titoloOr: films[i].original_title,
-       lingua: bandiere(films[i].original_language),
-       voto: votoStelle(films[i].vote_average)
-     }
-     $(".risultatiRicerca").append(template(film))
+// funzione ricerca - chiamata ajax
+  function cercaTitoli(url,parola,genere){   //inserire: url come stringa,per parola il risultato di ricerca, per genere se film o serie
+    $.ajax({
+      url: url,
+      data: {
+        api_key: "337a5096c47a89ed7fe0ca372a05c5bc",
+        query: parola //inserire valoreRicerca
+      },
+      method: "GET",
+      success: function(data,stato) {
+        var risultati = data.results;
+        if (genere == "serie") {
+          var titoloOriginale = "original_name";
+          var titolo = "name";
+        }else if(genre = "film") {
+          var titoloOriginale = "original_title";
+          var titolo = "title";
+        }
+        for (var i = 0; i < risultati.length; i++) {
+          var immagineUrl = '<img src="https://image.tmdb.org/t/p/w342'+ risultati[i].poster_path + '">';
+          console.log(risultati);
+          console.log(risultati[i].poster_path);
+          var risultato = {
+            titolo: risultati[i][titolo],
+            titoloOr: risultati[i][titoloOriginale],
+            lingua: bandiere(risultati[i].original_language),
+            voto: votoStelle(risultati[i].vote_average),
+            immagine: immagineUrl
+          }
+          $(".risultatiRicerca").append(template(risultato))
+        }
+      },
+      error: function(richiesta,stato,errore){
+        alert("Chiamata fallita!!!");
+      }
+    });
    }
- }
 
   //crea stelle
 
@@ -103,7 +79,5 @@ $(document).ready(function () {
     }
     return lingua;
   };
-
-
 
 });
