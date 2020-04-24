@@ -7,8 +7,17 @@ $(document).ready(function () {
     $(".risultatiRicerca").html("");
     var valoreRicerca = $("input").val();
     cercaTitoli("https://api.themoviedb.org/3/search/movie",valoreRicerca,"film")
-    // cercaTitoli("https://api.themoviedb.org/3/search/tv",valoreRicerca,"serie")
+    cercaTitoli("https://api.themoviedb.org/3/search/tv",valoreRicerca,"serie")
   });
+
+
+
+
+
+
+
+
+
 
 // funzione ricerca - chiamata ajax
   function cercaTitoli(url,parola,tipo){   //inserire: url come stringa,per parola il risultato di ricerca, per tipo se film o serie
@@ -20,14 +29,15 @@ $(document).ready(function () {
       },
       method: "GET",
       success: function(data,stato) {
-        var listaAttori = [];
         var risultati = data.results;
         if (tipo == "serie") {
           var titoloOriginale = "original_name";
           var titolo = "name";
+          var listaAttori = '<div class="attoriSerie"></div>'
         }else if(tipo == "film") {
           var titoloOriginale = "original_title";
           var titolo = "title";
+          var listaAttori = '<div class="attoriFilm"></div>'
         }
         for (var i = 0; i < risultati.length; i++) {
             var urlAttori;
@@ -36,29 +46,8 @@ $(document).ready(function () {
             }else if (tipo == "film") {
               urlAttori = 'https://api.themoviedb.org/3/movie/'+ risultati[i].id +'/credits'
             }
-            //la chiamata ajax non mantiene il dato [i]. Ma ad ogni [i] viene semplicemente richiamata. Quindi
-            //si può creare un ciclo per ogni chiamata ajax che associ questa al corrispondente risultati[i]
-            // $.ajax({
-            //
-            //   url: urlAttori,
-            //   data: {
-            //     api_key: "337a5096c47a89ed7fe0ca372a05c5bc",
-            //   },
-            //   method: "GET",
-            //   success: function (data,stato) {
-            //     // console.log(i);
-            //     var cast = data.cast;
-            //     var attori="";
-            //     for (var l = 0; l < 5; l++) {
-            //       if (cast[l] != undefined) {
-            //         attori += cast[l].name + " ";
-            //       };
-            //     };
-            //     // console.log( "questo ........................", attori);
-            //   }
-            // });
-            // // console.log( "questo ........................", attori);
-          caricaAttori(tipo,risultati,i,listaAttori);
+          caricaAttori(tipo,risultati,i);
+          console.log(listaAttori);
 
           var immagineUrl = '<img src="https://image.tmdb.org/t/p/w342'+ risultati[i].poster_path + '">';
             risultato = {
@@ -69,23 +58,10 @@ $(document).ready(function () {
             descrizione: risultati[i].overview,
             tipo: tipo,
             immagine: immagineUrl,
-            // attori: attori
-            // genere: genere
-          }
-
+            attori: listaAttori
+          };
           $(".risultatiRicerca").append(template(risultato))
-        }
-        setTimeout(function(){
-          for (var i = 0; i < risultati.length; i++) {
-            $(".finalmenteAttori").eq(i).html(listaAttori[i])
-
-          }
-        },500)
-        // $(".bo").click(function(){
-        //
-        //   var indice = $(this).parent().index();
-        //   $(this).siblings(".finalmenteAttori").html(listaAttori[indice])
-        // })
+        };
       },
       error: function(richiesta,stato,errore){
         alert("Chiamata fallita!!!");
@@ -120,8 +96,8 @@ $(document).ready(function () {
 
 
 
-  // attori
-  function caricaAttori(tipo,risultati,i,array){
+  // Funzione cerca Attori
+  function caricaAttori(tipo,risultati,i){
     var urlAttori;
     if (tipo == "serie") {
       urlAttori = 'https://api.themoviedb.org/3/tv/'+ risultati[i].id +'/credits'
@@ -140,10 +116,15 @@ $(document).ready(function () {
         var attori="";
         for (var l = 0; l < 5; l++) {
           if (cast[l] != undefined) {
-            attori += cast[l].name + " "
+            attori += cast[l].name + " ";
           };
         };
-        array[i] = attori;
+        if (tipo == "serie") {
+          $(".attoriSerie").eq(i).html(attori);
+          console.log(attori);
+        }else {
+          $(".attoriFilm").eq(i).html(attori);
+        }
       }
     });
   };
