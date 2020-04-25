@@ -12,10 +12,9 @@
 		<div class="risultatiRicerca">
 
 		</div>
-		<button type="button" name="button"></button>
 		<!-- template -->
 		<script class="giacomo" type="text/x-handlebars-template">
-			<div class="film">
+			<div class="film" data-id="{{idfilm}}">
 				<div>titolo {{titolo}}</div>
 				<div>titolo originale {{titoloOr}}</div>
 				<div>lingua {{{lingua}}}</div>
@@ -23,8 +22,6 @@
 				<div>overview {{descrizione}}</div>
 				<div>tipo {{tipo}}</div>
 				<div>Attori {{{attori}}}</div>
-
-				<!-- <button>attori {{attori}}</div> -->
 				<div>genere {{{genere}}}</div>
 				<div>{{{immagine}}}</div>
 			</div>
