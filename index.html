@@ -6,15 +6,31 @@
 		<title>Boolflix</title>
 		<script src="https://use.fontawesome.com/aba854a051.js"></script>
 	</head>
+	<header>
+		<div class="immagine">
+			<img src="https://fontmeme.com/permalink/200426/646793dd12cd2fe24043bdf42bce4831.png" alt="">
+		</div>
+		<div class="ricerca">
+			<input type="text" name="" placeholder="Cerca un titolo">
+			<button id="cercaTitoli" type="button" name="cercaTitoli">Cerca</button>
+			<span class="select">
+			</span>
+			<span class="bottoneCercaGeneri">
+			</span>
+		</div>
+	</header>
 	<body>
-		<input type="text" name="" placeholder="Cerca un titolo">
-		<button type="button" name="button">Cerca</button>
 		<div class="risultatiRicerca">
 
 		</div>
+
+
 		<!-- template -->
 		<script class="giacomo" type="text/x-handlebars-template">
 			<div class="film" data-id="{{idfilm}}">
+				<div class="copertina">{{{immagine}}}
+			</div>
+			<div class="infoFilm">
 				<div>titolo {{titolo}}</div>
 				<div>titolo originale {{titoloOr}}</div>
 				<div>lingua {{{lingua}}}</div>
@@ -23,8 +39,8 @@
 				<div>tipo {{tipo}}</div>
 				<div>Attori {{{attori}}}</div>
 				<div>genere {{{genere}}}</div>
-				<div>{{{immagine}}}</div>
-			</div>
+			</div></div>
+
 
 		</script>
 

@@ -3,11 +3,30 @@ $(document).ready(function () {
 
   var source = $(".giacomo").html();
   var template = Handlebars.compile(source)
-  $("button").click(function(){   //Funzione di ricerca
+  var listaGeneriProva=[];
+
+  $("#cercaTitoli").click(function(){   //Funzione di ricerca per nome
     $(".risultatiRicerca").html("");
     var valoreRicerca = $("input").val();
     cercaTitoli("https://api.themoviedb.org/3/search/movie",valoreRicerca,"film")
     cercaTitoli("https://api.themoviedb.org/3/search/tv",valoreRicerca,"serie")
+
+  });
+
+  $(".bottoneCercaGeneri").on("click", "#cercaGeneri",function(){   //Funzione selezione generi
+    var valoreSelect = $("#selezioneGeneri").val();
+    for (var i = 0; i < $(".film").length; i++) {
+      $(".film").eq(i)
+      if (valoreSelect == "All") {
+        $(".film").eq(i).show();
+        console.log($(".film")[i]);
+        console.log($(".film").eq(i).find(".generi").html().includes(valoreSelect));
+      }else if (!($(".film").eq(i).find(".generi").html().includes(valoreSelect))) {
+         $(".film").eq(i).hide();
+      }else {
+         $(".film").eq(i).show();
+      }
+    }
   });
 
 
@@ -43,9 +62,13 @@ $(document).ready(function () {
               urlAttori = 'https://api.themoviedb.org/3/movie/'+ risultati[i].id +'/credits';
             }
           caricaAttori(tipo,risultati,risultati[i].id,urlAttori);
-          cercaGeneri(tipo,risultati,risultati[i],urlGeneri)
-
-          var immagineUrl = '<img src="https://image.tmdb.org/t/p/w342'+ risultati[i].poster_path + '">';
+          cercaGeneri(tipo,risultati,risultati[i],urlGeneri,listaGeneriProva);
+          var immagineUrl;
+          if (risultati[i].poster_path != null) {
+            immagineUrl = '<img src="https://image.tmdb.org/t/p/w185'+ risultati[i].poster_path + '">';
+          }else {
+            immagineUrl = '<div class="immvuota">'+risultati[i][titolo] +'</div>';
+          }
             risultato = {
             idfilm: risultati[i].id,
             titolo: risultati[i][titolo],
@@ -60,6 +83,8 @@ $(document).ready(function () {
           };
           $(".risultatiRicerca").append(template(risultato));
         };
+
+
       },
       error: function(richiesta,stato,errore){
         alert("Chiamata fallita!!!");
@@ -116,7 +141,7 @@ $(document).ready(function () {
   };
 
   // funzione associa generi
-  function cercaGeneri(tipo,risultati,riferimento,url){
+  function cercaGeneri(tipo,risultati,riferimento,url,listaGeneriProva){
     $.ajax({
       url: url,
       data: {
@@ -127,6 +152,22 @@ $(document).ready(function () {
         var arrayIdGeneriFilm = riferimento.genre_ids;
         var arrayGeneriLista = data.genres;
         var generiFilm=" ";
+
+        //il seguente ciclo assegna all'array listaGeneriProva i generi presenti nella ricerca controllando che lo stesso non sia stato gia inserito
+        for (var k = 0; k < arrayGeneriLista.length; k++) {
+          if (!(listaGeneriProva.includes(arrayGeneriLista[k].name))) {
+            listaGeneriProva.push(arrayGeneriLista[k].name);
+          }
+        };
+        //questo ciclo assegna al select i vari generi
+        var options ='<option value="All">All</option>';
+        for (var a = 0; a < listaGeneriProva.length; a++) {
+          options += '<option value="'+listaGeneriProva[a]+'">'+listaGeneriProva[a]+'</option>';
+        }
+        var select ='<select id="selezioneGeneri" name="">'+options+'</select>';
+        $(".select").html(select);
+        $(".bottoneCercaGeneri").html('<button id="cercaGeneri" type="button" name="genere">Cerca per genere</button>');
+        //questo ciclo associa i generi al film o serie soggetto
         for (var i = 0; i < arrayIdGeneriFilm.length; i++) {
           for (var j = 0; j < arrayGeneriLista.length; j++) {
             if (arrayIdGeneriFilm[i] == arrayGeneriLista[j].id) {
@@ -134,7 +175,7 @@ $(document).ready(function () {
             };
           };
         };
-        console.log(generiFilm);
+        // console.log(generiFilm);
         $("[data-id="+riferimento.id+"]").find(".generi").html(generiFilm);
       }
     });
